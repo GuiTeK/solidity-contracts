@@ -45,8 +45,6 @@ contract LazyMintingERC721 is ERC721URIStorage, EIP712, Ownable {
 
     string private constant SIGNING_DOMAIN_VERSION = "1";
 
-    address private _deployer;
-
     constructor(string memory name_, string memory symbol_)
         ERC721(name_, symbol_)
         EIP712(name_, SIGNING_DOMAIN_VERSION) {}
