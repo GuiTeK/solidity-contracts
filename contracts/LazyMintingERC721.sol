@@ -45,12 +45,20 @@ contract LazyMintingERC721 is ERC721URIStorage, EIP712, Ownable {
 
     string private constant SIGNING_DOMAIN_VERSION = "1";
 
+    mapping(bytes32 => bool) private _usedMetadataURIs;
+
     constructor(string memory name_, string memory symbol_)
         ERC721(name_, symbol_)
         EIP712(name_, SIGNING_DOMAIN_VERSION) {}
 
     /*
-     * @dev Checks if the `voucher` is valid and if so, mints the NFT to the `redeemer` address.
+     * @dev Checks if the `voucher` is valid and if so, mints the NFT to the `redeemer` address. Conditions for a
+     * voucher to be valid are:
+     * - Signature must be cryptographically valid
+     * - Signature must be issued by `owner()`
+     * - Ether sent with the transaction must be greater than or equal to `voucher.minPriceWei`
+     * - `voucher.metadataURI` must have never been used for another minted NFT
+     * - `voucher.tokenId` must have never been used for another minted NFT
      * @return The newly minted NFT ID.
      */
     function redeem(address redeemer, NFTVoucher calldata voucher) public virtual payable returns (uint256) {
@@ -60,8 +68,13 @@ contract LazyMintingERC721 is ERC721URIStorage, EIP712, Ownable {
 
         require(msg.value >= voucher.minPriceWei, "LazyMintingERC721: insufficient funds to redeem");
 
+        bytes32 metadataURIHash = keccak256(bytes(voucher.metadataURI));
+        require(_usedMetadataURIs[metadataURIHash] == false,
+            "LazyMintingERC721: token already minted (metadata URI already used)");
+
         _mint(redeemer, voucher.tokenId);
         _setTokenURI(voucher.tokenId, voucher.metadataURI);
+        _usedMetadataURIs[metadataURIHash] = true;
 
         return voucher.tokenId;
     }

@@ -143,6 +143,76 @@ contract('LazyMintingERC721', async accounts => {
             }
         );
 
+        it('should revert when an NFTVoucher with the same tokenId has already been redeemed', async () => {
+            // Mint the NFT a first time
+            await this.contract.redeem(
+                this.redeemerAccount,
+                {
+                    ...this.sampleNFTVoucher,
+                    signature: this.sampleNFTVoucherSignature
+                },
+                { from: this.redeemerAccount, value: this.sampleNFTVoucher.minPriceWei }
+            );
+
+            // Try to mint the NFT a second time
+            await expectRevert(
+                this.contract.redeem(
+                    this.redeemerAccount,
+                    {
+                        ...this.sampleNFTVoucher,
+                        signature: this.sampleNFTVoucherSignature
+                    },
+                    { from: this.redeemerAccount, value: this.sampleNFTVoucher.minPriceWei }
+                ),
+                'ERC721: token already minted',
+            );
+        });
+
+        it('should revert when an NFTVoucher with the same metadataURI has already been redeemed', async () => {
+            // Mint the NFT a first time
+            await this.contract.redeem(
+                this.redeemerAccount,
+                {
+                    ...this.sampleNFTVoucher,
+                    signature: this.sampleNFTVoucherSignature
+                },
+                { from: this.redeemerAccount, value: this.sampleNFTVoucher.minPriceWei }
+            );
+
+            // Create a voucher with a different tokenId but the same metadataURI
+            const duplicateNFTVoucher = {
+                tokenId: 1338,
+                minPriceWei: 1,
+                metadataURI: 'ipfs://test',
+            };
+            const duplicateNFTVoucherHexStringSignature = ethSigUtil.signTypedData({
+                privateKey: Uint8Array.from(this.adminAccountPrivateKey),
+                data: {
+                    types: this.typedDataTypes,
+                    primaryType: this.nftVoucherStructName,
+                    domain: this.signingDomain,
+                    message: {
+                        ...duplicateNFTVoucher
+                    }
+                },
+                version: ethSigUtil.SignTypedDataVersion.V4
+            });
+            const duplicateNFTVoucherSignature = Buffer.from(duplicateNFTVoucherHexStringSignature.slice(2), 'hex');
+
+            // Try to mint the NFT with the duplicate metadata URI
+            await expectRevert(
+                this.contract.redeem(
+                    this.redeemerAccount,
+                    {
+                        ...duplicateNFTVoucher,
+                        signature: duplicateNFTVoucherSignature
+                    },
+                    { from: this.redeemerAccount, value: duplicateNFTVoucher.minPriceWei }
+                ),
+                'LazyMintingERC721: token already minted (metadata URI already used)',
+            );
+        });
+
         it('should mint the NFT to the redeemer address when the NFTVoucher signature is valid and verified',
             async () => {
                 await expectEvent(await this.contract.redeem(
