@@ -1,0 +1,16 @@
+{
+  "NFTVoucher": [
+    {
+      "name": "tokenId",
+      "type": "uint256"
+    },
+    {
+      "name": "minPriceWei",
+      "type": "uint256"
+    },
+    {
+      "name": "metadataURI",
+      "type": "string"
+    }
+  ]
+}

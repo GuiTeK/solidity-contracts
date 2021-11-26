@@ -1,0 +1,14 @@
+{
+  "name": "nft-voucher-signer",
+  "version": "0.1.0",
+  "description": "",
+  "main": "nft-voucher-signer.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Guillaume TRUCHOT (GuiTeK)",
+  "license": "MIT",
+  "dependencies": {
+    "@metamask/eth-sig-util": "^4.0.0"
+  }
+}
