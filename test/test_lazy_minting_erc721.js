@@ -1,4 +1,4 @@
-const LazyMintingERC721 = artifacts.require('LazyMintingERC721');
+const TestLazyMintingERC721 = artifacts.require('TestLazyMintingERC721');
 
 const {
     BN,
@@ -12,7 +12,7 @@ const { expect } = require('chai');
 
 const ganacheAccountKeys = require('./ganache_account_keys.json');
 
-contract('LazyMintingERC721', async accounts => {
+contract('TestLazyMintingERC721', async accounts => {
     beforeEach(async () => {
         this.adminAccount = accounts[9];
         this.adminAccountPrivateKey =
@@ -21,7 +21,7 @@ contract('LazyMintingERC721', async accounts => {
         this.redeemerAccountPrivateKey =
             ganacheAccountKeys['addresses'][this.redeemerAccount.toLowerCase()]['secretKey']['data'];
         this.contractName = 'Test Lazy Minting ERC721';
-        this.contract = await LazyMintingERC721.new(this.contractName, 'TLMX', { from: this.adminAccount });
+        this.contract = await TestLazyMintingERC721.new(this.contractName, 'TLMX', { from: this.adminAccount });
         this.nftVoucherStructName = 'NFTVoucher';
         this.typedDataTypes = {
             EIP712Domain: [

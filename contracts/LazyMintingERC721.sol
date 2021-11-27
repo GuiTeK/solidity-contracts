@@ -26,7 +26,7 @@ import "@openzeppelin/contracts/utils/cryptography/draft-EIP712.sol";
  * However, if for some reason you need to add fields in the `NFTVoucher` struct, you will need to edit this contract
  * directly because you can't inherit from it and modify the struct.
  */
-contract LazyMintingERC721 is ERC721URIStorage, EIP712, Ownable {
+abstract contract LazyMintingERC721 is ERC721URIStorage, EIP712, Ownable {
     /// @dev Voucher containing all the data necessary to mint an NFT.
     struct NFTVoucher {
         /// @dev ID which will be given to the NFT.
@@ -43,13 +43,7 @@ contract LazyMintingERC721 is ERC721URIStorage, EIP712, Ownable {
         bytes signature;
     }
 
-    string private constant SIGNING_DOMAIN_VERSION = "1";
-
     mapping(bytes32 => bool) private _usedMetadataURIs;
-
-    constructor(string memory name_, string memory symbol_)
-        ERC721(name_, symbol_)
-        EIP712(name_, SIGNING_DOMAIN_VERSION) {}
 
     /*
      * @dev Checks if the `voucher` is valid and if so, mints the NFT to the `redeemer` address. Conditions for a
