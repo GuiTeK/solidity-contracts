@@ -13,12 +13,11 @@ import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
  * - `tokenURI()` (already implemented in OpenZeppelin's `ERC721` contract, so we have nothing to do)
  * - `contractURI()`
  */
-contract OpenSeaERC721 is ERC721 {
+abstract contract OpenSeaERC721 is ERC721 {
     string private _baseTokenURI;
     string private _contractURI;
 
-    constructor(string memory name_, string memory symbol_, string memory baseTokenURI_, string memory contractURI_)
-        ERC721(name_, symbol_) {
+    constructor(string memory baseTokenURI_, string memory contractURI_) {
         _baseTokenURI = baseTokenURI_;
         _contractURI = contractURI_;
     }
