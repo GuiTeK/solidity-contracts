@@ -71,9 +71,9 @@ contract Equity is Context {
      * reliability of the events, and not the actual splitting of Ether.
      *
      * To learn more about this see the Solidity documentation for
-     * https://solidity.readthedocs.io/en/latest/contracts.html#fallback-function[fallback functions].
+     * https://solidity.readthedocs.io/en/latest/contracts.html#fallback-function.
      */
-    receive() external payable {
+    fallback() external payable {
         emit PaymentReceived(_msgSender(), msg.value);
     }
 

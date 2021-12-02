@@ -125,7 +125,7 @@ contract('Equity', async accounts => {
         });
     });
 
-    describe('receive()', async () => {
+    describe('fallback()', async () => {
         it('should emit PaymentReceived event when receiving Ether', async () => {
             const amount = 1000;
             expectEvent(await this.contract.sendTransaction({value: amount, from: this.adminAccount}),'PaymentReceived', {
