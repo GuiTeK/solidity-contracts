@@ -1,10 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.10;
 
-import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/utils/Address.sol";
 import "@openzeppelin/contracts/utils/Context.sol";
-import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 
 /**
  * @title Equity
@@ -27,8 +25,6 @@ import "@openzeppelin/contracts/utils/math/SafeMath.sol";
  * kept in this contract, and the actual transfer is triggered as a separate step by calling the {release} function.
  */
 contract Equity is Context {
-    using SafeMath for uint256;
-
     event PayeeAdded(uint256 payeeIndex, address[] addresses, uint256 shares);
     event PayeeNextAddressUsed(uint256 payeeIndex, uint256 newAddressIndex);
     event PaymentReleased(uint256 payeeIndex, address to, uint256 amount);
