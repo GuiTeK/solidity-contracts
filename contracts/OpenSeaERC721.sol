@@ -23,6 +23,45 @@ abstract contract OpenSeaERC721 is ERC721 {
     }
 
     /**
+     * @dev /!\ POLYGON ONLY /!\ ----- Comment out this function if not using Polygon.
+     * Allows OpenSea Polygon proxy contract to manage all the tokens of the contract and, in conjunction with
+     * meta-transactions (see `_msgSender()` override), enables gasless minting.
+     * C.F. https://docs.opensea.io/docs/polygon-basic-integration
+     */
+    function isApprovedForAll(address owner, address operator) public view virtual override returns (bool) {
+        if (operator == address(0x58807baD0B376efc12F5AD86aAc70E78ed67deaE)) {
+            return true;
+        }
+
+        return ERC721.isApprovedForAll(owner, operator);
+    }
+
+    /**
+     * @dev /!\ POLYGON ONLY /!\ ----- Comment out this function if not using Polygon.
+     * Allows for meta-transactions and, in conjunction with the use of OpenSea Polygon proxy contract
+     * (see `isApprovedForAll()` override), enables gasless minting.
+     * C.F. https://docs.opensea.io/docs/polygon-basic-integration
+     */
+    function _msgSender() internal view virtual override returns (address sender) {
+        if (msg.sender == address(this)) {
+            bytes memory array = msg.data;
+            uint256 index = msg.data.length;
+
+            assembly {
+                // Load the 32 bytes word from memory with the address on the lower 20 bytes, and mask those.
+                sender := and(
+                mload(add(array, index)),
+                0xffffffffffffffffffffffffffffffffffffffff
+                )
+            }
+        } else {
+            sender = msg.sender;
+        }
+
+        return sender;
+    }
+
+    /**
      * @dev Required by OpenSea. Redundant with OpenZeppelin's `ERC721._baseURI()`, so let's just make it a wrapper of
      * `_baseURI()`. Child contracts should override `_baseURI()` and NOT `baseTokenURI()`.
      * @return The base token URI, e.g. `ipfs://`.
